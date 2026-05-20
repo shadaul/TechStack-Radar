@@ -1,4 +1,16 @@
 # Databricks notebook source
+import requests
+import json
+
+url = "https://jsonplaceholder.typicode.com/users"
+response = requests.get(url)
+
+file_path = "/Volumes/workspace/default/bronze_zone/raw_data.json"
+with open(file_path, "w") as file:
+    file.write(response.text)
+
+# COMMAND ----------
+
 file_path = "/Volumes/workspace/default/bronze_zone/raw_data.json" 
 
 df_bronze = spark.read.option("multiline", "true").json(file_path)
