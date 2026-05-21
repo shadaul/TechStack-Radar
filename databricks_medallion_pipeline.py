@@ -11,9 +11,12 @@ with open(file_path, "w") as file:
 
 # COMMAND ----------
 
+from pyspark.sql.functions import current_timestamp
+
 file_path = "/Volumes/workspace/default/bronze_zone/raw_data.json" 
 
 df_bronze = spark.read.option("multiline", "true").json(file_path)
+df_bronze = df_bronze.withColumn("ingestion_timestamp", current_timestamp())
 
 display(df_bronze)
 
@@ -26,8 +29,8 @@ print(f"strok v silver {df_silver.count()}")
 silver_path = "/Volumes/workspace/default/bronze_zone/silver_data"
 df_silver.write.format("parquet").mode("overwrite").save(silver_path)
 print(f"uspeshno saved v {silver_path}")
-
-display(silver_path)
+df_gold = df_silver.groupBy("company").count()
+display(df_gold)
 
 # COMMAND ----------
 
